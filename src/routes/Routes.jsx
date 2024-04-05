@@ -8,6 +8,8 @@ import DetailsTodo from "../pages/DetailsTodo";
 import EditTodo from "../pages/EditTodo";
 import Home from "../pages/Home";
 import PageNotFound from "../pages/PageNotFound";
+import SignIn from "../pages/SignIn";
+import SignUp from "../pages/SignUp";
 
 
 
@@ -32,8 +34,14 @@ export const router = createBrowserRouter([
             path:"/detailTodo/:id",
             element:<DetailsTodo />
         },
-
-
+        {
+            path:"/signup",
+            element:<SignUp />
+        },
+        {
+            path:"/signin",
+            element:<SignIn />
+        },
       ]
     },
     {
