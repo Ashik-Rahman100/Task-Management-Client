@@ -2,13 +2,12 @@ import { useContext } from "react";
 import AllTodos from "../components/AllTodos";
 import Greeting from "../components/ui/Greeting";
 import { DataContext } from "../context/DataContext";
-
-
+import { getCookie } from "../utils/utils";
+import SignIn from "./SignIn";
 
 export default function Home() {
-
-
-  const {data, setData} = useContext(DataContext)
+  const { data, setData } = useContext(DataContext);
+  const accessToken = getCookie("accessToken");
   return (
     <div className=" w-full relative min-h-screen pb-60 bg-[#1a0a36] ">
       <div className="max-w-[1300px] px-4">
@@ -17,7 +16,11 @@ export default function Home() {
           <Greeting />
 
           {/* display all todos */}
-          <AllTodos data = {data} setData={setData} />
+          {accessToken ? (
+            <AllTodos data={data} setData={setData} />
+          ) : (
+            <SignIn></SignIn>
+          )}
 
           {/* <div
             onClick={() => navigate("/addTodo")}

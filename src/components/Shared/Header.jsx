@@ -1,7 +1,20 @@
 import { Link, useNavigate } from "react-router-dom";
+import { getCookie, logout } from "../../utils/utils";
 
 export default function Header() {
   const navigate = useNavigate();
+
+  // Usage example
+  const accessToken = getCookie("accessToken");
+
+  // Now you can use the accessToken variable in your application
+  // console.log(accessToken);
+
+  const signOut = () => {
+    logout();
+    navigate("/signin");
+  };
+
   return (
     <div className="navbar bg-[#1a0a36] text-white">
       <div className="navbar-start">
@@ -26,25 +39,31 @@ export default function Header() {
             tabIndex={0}
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-[#1a0a36] text-white h-32 rounded-box w-52"
           >
-            <li>
-              <a className="text-xl bold hover:bg-white hover:text-black">
-                Add Task
-              </a>
-            </li>
+            {accessToken && (
+              <li>
+                <a className="text-xl bold hover:bg-white hover:text-black">
+                  Add Task
+                </a>
+              </li>
+            )}
           </ul>
         </div>
-        <Link to="/" className="btn btn-ghost text-xl">Task Management</Link>
+        <Link to="/" className="btn btn-ghost text-xl">
+          Task Management
+        </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          <li>
-            <a
-              className="text-xl bold hover:bg-white hover:text-black"
-              onClick={() => navigate("/addTodo")}
-            >
-              Add Task
-            </a>
-          </li>
+          {accessToken && (
+            <li>
+              <a
+                className="text-xl bold hover:bg-white hover:text-black"
+                onClick={() => navigate("/addTodo")}
+              >
+                Add Task
+              </a>
+            </li>
+          )}
         </ul>
       </div>
       <div className="navbar-end ">
@@ -54,9 +73,21 @@ export default function Header() {
         </div> */}
         <div className="flex items-center space-x-2 ">
           {/* <RxPlus /> */}
-          <Link to="/signin">
-            <button className= "btn btn-outline btn-primary text-white">Sign In</button>
-          </Link>
+
+          {accessToken ? (
+            <button
+              onClick={() => signOut()}
+              className="btn btn-outline btn-primary text-white"
+            >
+              Sign Out
+            </button>
+          ) : (
+            <Link to="/signin">
+              <button className="btn btn-outline btn-primary text-white">
+                Sign In
+              </button>
+            </Link>
+          )}
         </div>
       </div>
     </div>
