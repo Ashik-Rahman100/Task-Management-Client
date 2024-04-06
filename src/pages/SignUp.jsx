@@ -1,5 +1,9 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+
+import { toast } from "react-toastify";
+import Cookies from "universal-cookie";
 
 export default function SignUp() {
   const {
@@ -7,7 +11,50 @@ export default function SignUp() {
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+
+  // const [nextState, setNextState] = useState("sign");
+  const [loading, setLoading] = useState(false);
+  // const navigate = useNavigate();
+  const cookies = new Cookies()
+
+  const onSubmit = (data) => {
+    // console.log(data);
+    const user = {
+      password:data.password,
+      name:{
+          firstName:data.firstName,
+          secondName:data.lastName
+      },
+      email:data.email
+  
+   
+  }
+    const url = `https://task-management-serverr.vercel.app/api/v1/auth/signup`
+    fetch(url,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(user)
+    })
+    .then(resoponse => resoponse.json())
+    .then(result => {
+      // console.log(result, "result")
+      if(result.
+        statusCode=== 200){
+        toast.success("User Created Success");
+        cookies.set("email", result?.data?.email, { path: "/" });
+        cookies.set("role", result?.data?.role, { path: "/" });
+        cookies.set("_id", result?.data?._id, { path: "/" });
+
+        setLoading(false)
+      }
+      else{
+        toast.error(result.message);
+        setLoading(false)
+      }
+    })
+  }
 
   return (
     <div className="w-full relative min-h-screen bg-[#1a0a36]">
@@ -77,7 +124,7 @@ export default function SignUp() {
             className="w-full h-14 max-sm:h-12 
         border-none
        rounded-xl p-4 text-base max-sm:placeholder:text-sm mt-1 outline-none"
-            type="number"
+            
             {...register("password")}
           />
           {errors.firstName?.type === "required" && (

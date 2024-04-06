@@ -52,10 +52,10 @@ export default function Header() {
           <RxPlus />
           <button>Create Todo</button>
         </div> */}
-        <div className="flex items-center space-x-2 btn btn-outline btn-primary ">
+        <div className="flex items-center space-x-2 ">
           {/* <RxPlus /> */}
           <Link to="/signin">
-            <button className="text-white">Sign In</button>
+            <button className= "btn btn-outline btn-primary text-white">Sign In</button>
           </Link>
         </div>
       </div>

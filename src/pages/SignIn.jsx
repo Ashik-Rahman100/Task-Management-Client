@@ -1,5 +1,9 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import { toast } from "react-toastify";
+import Cookies from "universal-cookie";
 
 export default function SignIn() {
   const {
@@ -7,7 +11,42 @@ export default function SignIn() {
     formState: { errors },
     handleSubmit,
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+
+    // const [nextState, setNextState] = useState("sign");
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const cookies = new Cookies()
+  
+    const onSubmit = (data) => {
+        setLoading(true)
+    //   console.log(data);
+      const url = `https://task-management-serverr.vercel.app/api/v1/auth/login`
+      fetch(url,{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(resoponse => resoponse.json())
+      .then(result => {
+        console.log(result, "result")
+        if(result.
+          statusCode=== 200){
+          toast.success("User Logged in Successfully");
+          cookies.set("accessToken", result?.data?.accessToken, { path: "/" });
+          
+  
+          setLoading(false)
+          navigate("/")
+          
+        }
+        else{
+          toast.error(result.message);
+          setLoading(false)
+        }
+      })
+    }
 
   return (
     <div className="w-full relative min-h-screen bg-[#1a0a36]">
@@ -39,10 +78,10 @@ export default function SignIn() {
             className="w-full h-14 max-sm:h-12 
         border-none
        rounded-xl p-4 text-base max-sm:placeholder:text-sm mt-1 outline-none"
-            type="number"
+            
             {...register("password")}
           />
-          {errors.firstName?.type === "required" && (
+          {errors.password?.type === "required" && (
             <p role="alert">First name is required</p>
           )}{" "}
           <br />
