@@ -1,15 +1,30 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { IoMdSearch } from "react-icons/io";
+import { getCookie } from "../utils/utils";
 import Todo from "./Todo";
 
-export default function AllTodos({ data, setData }) {
+export default function AllTodos() {
   // console.log("data", data.length);
+  const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
+  const token = getCookie("accessToken");
+  useEffect(() => {
+    const url = `https://task-management-serverr.vercel.app/api/v1/task`;
+    fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        authorization: token,
+      },
+    })
+      .then((response) => response.json())
+      .then((responseData) => setData(responseData.data));
+  }, []);
+
   const completedTask = () => {
-    const completed = data.filter((val) => val.check);
+    const completed = data?.filter((val) => val.check);
 
     if (data.length) {
       const completePercentage = (completed.length / data.length) * 100;

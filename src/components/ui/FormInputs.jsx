@@ -1,12 +1,11 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { v4 as uuidv4 } from "uuid";
-import { DataContext } from "../../context/DataContext";
+import { getCookie } from "../../utils/utils";
 
 export default function FormInputs() {
   const navigate = useNavigate();
-  const { data, setData } = useContext(DataContext);
 
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
@@ -20,9 +19,9 @@ export default function FormInputs() {
     let title = e.target.value;
     setTaskName(e.target.value);
 
-    if (title.length > 35 ) {
+    if (title.length > 35) {
       toast.error("Name should be less than or equal to 30 characters");
-    } 
+    }
   };
   const handleDescription = (e) => {
     let description = e.target.value;
@@ -30,7 +29,7 @@ export default function FormInputs() {
 
     if (description.length > 250) {
       toast.error("Description should be less than or equal to 200 characters");
-    } 
+    }
   };
 
   const handleSubmit = (e) => {
@@ -52,6 +51,7 @@ export default function FormInputs() {
 
     // Get the minutes
     const minutes = now.getMinutes().toString().padStart(2, "0");
+    const token = getCookie("accessToken");
 
     const id = uuidv4();
     const title = taskName;
@@ -61,23 +61,38 @@ export default function FormInputs() {
 
     if (taskName === "") {
       return toast.warn("please enter your task name");
-    } else {
-      const newTask = {
-        id: id,
-        title: title,
-        description: description,
-        currentTime: currentTime,
-        check: check,
-      };
-
-      localStorage.setItem("todoItems", JSON.stringify([...data, newTask]));
-      setData([...data, newTask]);
-      toast.success("Task added successfully");
-      setTaskName("");
-      setTaskDescription("");
-      navigate("/");
     }
+
+    const newTask = {
+      id: id,
+      title: title,
+      description: description,
+      currentTime: currentTime,
+      check: check,
+    };
+    const url = `https://task-management-serverr.vercel.app/api/v1/task`;
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: token,
+      },
+      body: JSON.stringify(newTask),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        // console.log("result", result)
+        if (result.statusCode === 200) {
+          toast.success("Task added successfully");
+          setTaskName("");
+          setTaskDescription("");
+          navigate("/");
+        } else {
+          toast.error(result.message);
+        }
+      });
   };
+
   return (
     <div className=" py-10">
       <form onSubmit={handleSubmit} className="max-w-[600px] m-auto">

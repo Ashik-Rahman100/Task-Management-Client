@@ -41,7 +41,7 @@ export default function Header() {
           >
             {accessToken && (
               <li>
-                <a className="text-xl bold hover:bg-white hover:text-black">
+                <a onClick={() => navigate("/addTodo")} className="text-xl bold hover:bg-white hover:text-black">
                   Add Task
                 </a>
               </li>

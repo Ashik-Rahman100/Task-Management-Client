@@ -18,7 +18,6 @@ export default function SignIn() {
     const cookies = new Cookies()
   
     const onSubmit = (data) => {
-        setLoading(true)
     //   console.log(data);
       const url = `https://task-management-serverr.vercel.app/api/v1/auth/login`
       fetch(url,{
